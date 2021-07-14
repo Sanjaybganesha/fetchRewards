@@ -4,14 +4,24 @@ var router = express.Router();
 var apiRoutes = require('../router/myrouter');
 const fs = require('fs');
 var balanceData=[];
-var transactionData=[];
+var transactionData = [];
+var unquiePayer = [];
 // controller functions
 module.exports = {
     //implementation of promise to reader large data
     balanceData: function (req, res) {
+        
         callMyPromise().then(function (result) {
-            res.send(result);
-        });
+            console.log(result);
+            transactionData = result;
+            console.log(transactionData);
+            unquiePayer=transactionData.map(item => item.payer).filter((value, index, self) => self.indexOf(value) === index);
+            console.log(unquiePayer);  
+            res.send(JSON.stringify(unquiePayer));
+    
+    });
+        //console.log(uniquePayer);
+    
     },
     addData:function(req,res){
     console.log("Got Body:",req.body);
@@ -20,7 +30,9 @@ module.exports = {
     if(data.points!=null && data.points!=undefined){
 
     if(data.timestamp!=null && data.timestamp!=undefined){
-    res.send("Message received");
+        transactionData.push(data);
+        console.log(transactionData);
+        res.send("Message received");
     }
     else{
         res.send("Message failed");
@@ -35,13 +47,15 @@ module.exports = {
     else{
         res.send("Message failed");
         }
-    }
+    },
     spendData:function (req, res) {
         console.log("Got Body:",req.body);
         data=req.body;
         res.send("hi i am spend");
     }
 };
+
+
 
 
 //Step 1: declare promise
@@ -51,9 +65,7 @@ var myPromise = () => {
             if(err){
             reject("error");
             }else{
-
             resolve(data);
-
             }
         });
     });
