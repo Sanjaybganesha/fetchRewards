@@ -7,14 +7,6 @@ var balanceData=[];
 var transactionData = [];
 var totalBalance=0;
 
-//[
-//  { "payer": "DANNON", "points": -200, "timestamp": "2020-10-31T15:00:00Z" },
-//  { "payer": "UNILEVER", "points": 200, "timestamp": "2020-10-31T11:00:00Z" },
-//  { "payer": "DANNON", "points": 1000, "timestamp": "2020-11-02T14:00:00Z" },
-//  { "payer": "MILLER COORS", "points": 10000, "timestamp": "2020-11-01T14:00:00Z" },
-//  { "payer": "DANNON", "points": 300, "timestamp": "2020-10-31T10:00:00Z" }
-//]
-// controller functions
 module.exports = {
     //using datafrom data.json remember to change it
     balanceData: function (req, res) {
@@ -102,41 +94,44 @@ var sortTransactionData = () => {
 
 var subTotal = function (pointsToSpend){
     //saving in unique payers in dataCount obj
-    let remaingPoints = 0;
-    let indexPoints = [];
-    let result = {};            
-        transactionData.forEach((element, index) => {
+   // let indexPoints = [];
+    let result = {};
+    
+        transactionData.forEach((element,index) => {
             if (pointsToSpend > 0) {
  
-                if (element.points > pointsToSpend) {
+                if (element.points > pointsToSpend ) {
                    
                     if (!result[element.payer]) {
                         
                         result[element.payer] = 0;
                     }
                     
-                   result[element.payer] = -(pointsToSpend);
+                    result[element.payer] = -(pointsToSpend);
                    
                     element.points = element.points - pointsToSpend;
                     pointsToSpend -= element.points;
                     
                 }
-            
-            
-                else {
-                
-                   
+               else {
                     if (!result[element.payer]) {
                         result[element.payer] = 0;
                     }
-
-                    result[element.payer] = -(element.points);
-            
-                    pointsToSpend = pointsToSpend - element.points;
-                    element.points = 0;
-                    indexPoints.push(index);
+                    if (element.points < 0) {
+                        result[element.payer] -=element.points;
+                        pointsToSpend = pointsToSpend - element.points;
+                        element.points = 0;
+                    }
+                    else {
+                        result[element.payer] = -(element.points);
+                        pointsToSpend = pointsToSpend - element.points;
+                        element.points = 0;
+                        //indexPoints.push(index);
+                    }
                 }
-            }
+
+                }
+            
         });
         console.log(result);
         return result;
