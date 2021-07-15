@@ -1,9 +1,9 @@
-var express = require('express');
-var router = express.Router();
-var fs = require('fs');
+const express = require('express');
+const router = express.Router();
 
-var myappcontroller = require('../controller/myController');
+const myappcontroller = require('../controller/myController');
 
+//URI
 router.get('/balance', myappcontroller.balanceData);
 router.post('/add', myappcontroller.addData);
 router.post('/spend', myappcontroller.spendData);
